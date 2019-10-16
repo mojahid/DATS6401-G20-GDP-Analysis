@@ -1,0 +1,322 @@
+<html>
+<head>
+	<title>Visualization (Home)</title>
+	<link rel="stylesheet" type="text/css" href="style.css" />
+		<script src="https://www.gstatic.com/charts/loader.js"></script>
+	<script src="https://www.gstatic.com/charts/loader.js"></script>
+	<script>
+		google.charts.load('current', {'packages':['corechart']});
+		google.charts.setOnLoadCallback(drawAllSheets);
+		google.charts.load('current', {'packages':['table']});
+		 google.charts.load('current', {'packages':['line']});
+		
+		function drawAllSheets() {
+			
+			drawSheetName('GDP_Population_2017', 'SELECT L,M',continentPopulationResponseHandler);
+			drawSheetName('GDP_Population_2017', 'SELECT I,J',continentGdpResponseHandler);
+			drawSheetName('GDP_Population_2017', 'SELECT O,P',continentGdpPerCapitaResponseHandler);
+			drawSheetName('GDP_Population_2017', 'SELECT B,G',countriesSharedGdpResponseHandler);
+			drawSheetName('GDP_Population_2017', 'SELECT A,B,C,D,F,G',tableDataResponseHandler);
+			drawSheetName('Military_GDP', 'SELECT A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U',militaryGdpResponseHandler);
+			drawSheetName('Military_GDP1', 'SELECT A,B,C,D,E,F,G,H,I,J,K,L,M',militaryGdp1ResponseHandler);
+			drawSheetName('Healthcare_GDP', 'SELECT A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U',healthcareGdpResponseHandler);
+			drawSheetName('Healthcare_GDP1', 'SELECT A,B,C,D,E,F,G,H,I,J,K,L,M',healthcareGdp1ResponseHandler);
+			drawSheetName('Education_GDP', 'SELECT A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U',educationGdpResponseHandler);
+			drawSheetName('Education_GDP1', 'SELECT A,B,C,D,E,F,G,H,I,J,K,L,M',educationGdp1ResponseHandler);
+			
+		} //drawAllSheets
+		
+
+		
+		function drawSheetName(sheetName, query, responseHandler) {
+			var queryString = encodeURIComponent(query);
+			var query = new google.visualization.Query(
+				'https://docs.google.com/spreadsheets/d/1I8FgoKL7dJQWF9sO7Z8MbVAgcgXVJRTrDSYXoVDr3sY/gviz/tq?sheet=' + sheetName + '&headers=1&tq=' +queryString  
+				 
+			);
+			
+			query.send(responseHandler);
+		} //drawSheetName
+		
+		
+		
+		function continentPopulationResponseHandler(response){
+			//get the data
+			var data = response.getDataTable();
+			data.sort({column: 1, desc:true});
+			
+			//set the options
+			var options = {height: 200,
+						   vAxis: {title: 'Spending in Billions ($)'},
+						   hAxis: {title: 'Country'},
+						   pieHole: 0.35,
+						   title: 'Continent Population',
+						   };
+			
+			//create the chart and draw it
+			var chart = new google.visualization.PieChart(document.getElementById('continent_population_div'));
+			chart.draw(data, options);
+			
+			
+		} //continentPopulationResponseHandler
+		
+		
+		function continentGdpResponseHandler(response){
+			//get the data
+			var data = response.getDataTable();
+			data.sort({column: 1, desc:true});
+			
+			//set options
+			var options = {height: 200,
+						   vAxis: {title: 'Spending in Billions ($)'},
+						   hAxis: {title: 'Country'},
+						   pieHole: 0.35,
+						   title: 'Continent GDP',
+						   is3D: true,
+						  
+						   };
+	
+			//create the chart and draw it
+			var chart = new google.visualization.PieChart(document.getElementById('continent_gdp_div'));
+			chart.draw(data, options);
+			
+		} //allGdpResponseHandler
+		
+		
+	
+		function continentGdpPerCapitaResponseHandler(response){
+			var data = response.getDataTable();
+			data.sort({column: 1, desc: true});
+			
+			var options = {height: 200,
+						   vAxis: {title: 'Spending in Billions ($)'},
+						   hAxis: {title: 'Country'},
+						   pieHole: 0.35,
+						   title: 'Continent GDP Per Capita'
+			               }; 
+			var chart = new google.visualization.PieChart(document.getElementById('continent_GdpPerCapita_div'));
+			chart.draw(data, options);
+			
+			
+		} //continentGdpPerCapitaResponseHandler
+		
+		function countriesSharedGdpResponseHandler(response){
+			//get the data
+			var data = response.getDataTable();
+			
+			//set the options
+			var options = {
+					height: 400,
+					colorAxis: {colors: ['#e7711c', '#4374e0']}, //orange to blue
+					title: 'Countries Shared GDP'
+			};
+			
+			//create the chart and draw it
+			var chart = new google.visualization.GeoChart(document.getElementById('countries_shared_Gdp_div'));
+			chart.draw(data, options);
+		} //countriesSharedGdpResponseHandler	
+			
+			
+		function tableDataResponseHandler(response)
+		{
+			//get the data
+			var data = response.getDataTable();
+				data.sort({column: 2, desc: true});
+			
+			//set options 
+			
+			var options = {showRowNumber: true,height: 400, width:'100%'};
+			
+			//create the table
+
+		   var table = new google.visualization.Table(document.getElementById('table_data_gdp'));
+
+        table.draw(data, options);
+			
+		} //tableDataResponseHandler
+		
+				function militaryGdpResponseHandler(response){
+			//get the data
+			var data = response.getDataTable();
+			data.sort({column: 0, desc:true});
+			
+			//set options
+			
+		var options = {
+        chart: {
+          title: 'Military expenditure (% of GDP)',
+        },
+        width: 900,
+        height: 500,
+		hAxis: {title: 'Year',format:' ',side: 'top'},
+		vAxis: {title: '% of GDP',format:'percent'}
+		
+		};
+
+      var chart = new google.charts.Line(document.getElementById('military_gdp_line_div'));
+
+      chart.draw(data, google.charts.Line.convertOptions(options));
+			
+		} //militaryGdpResponseHandler
+		
+		
+		function militaryGdp1ResponseHandler(response){
+			//get the data
+			var data = response.getDataTable();
+			data.sort({column: 5, desc:true});
+			
+			//set options
+			var options = {height: 600,
+						   width: 900,
+						   vAxis: {title: '% of GDP',format:'percent'},
+						   hAxis: {title: 'Country'}};
+	
+			//create the chart and draw it
+			var chart = new google.visualization.ColumnChart(document.getElementById('military_gdp_col_div'));
+			chart.draw(data, options);
+			
+		} //militaryGdp1ResponseHandler
+		
+		
+		
+		function healthcareGdpResponseHandler(response){
+			//get the data
+			var data = response.getDataTable();
+			data.sort({column: 0, desc:true});
+			
+			//set options
+			
+		var options = {
+        chart: {
+          title: 'Healthcare expenditure per Countries (% of GDP)',
+        },
+        width: 850,
+        height: 550,
+		hAxis: {title: 'Year',format:' ',side:'top'},
+		vAxis: {title: '% of GDP',format:'percent'}
+		
+		};
+
+      var chart = new google.charts.Line(document.getElementById('healthcare_gdp_line_div'));
+
+      chart.draw(data, google.charts.Line.convertOptions(options));
+			
+		} //healthcareGdpResponseHandler
+		
+		
+		function healthcareGdp1ResponseHandler(response){
+			//get the data
+			var data = response.getDataTable();
+			data.sort({column: 0, desc:true});
+			
+			//set options
+			var options = {height: 550,
+						   width: 850,
+						   vAxis: {title: '% of GDP',format:'percent'},
+						   hAxis: {title: 'Country'}};
+	
+			//create the chart and draw it
+			var chart = new google.visualization.ColumnChart(document.getElementById('healthcare_gdp_col_div'));
+			chart.draw(data, options);
+			
+		} //healthcareGdp1ResponseHandler
+		
+		function educationGdpResponseHandler(response){
+			//get the data
+			var data = response.getDataTable();
+			data.sort({column: 0, desc:true});
+			
+			//set options
+			
+		var options = {
+        chart: {
+          title: 'Education expenditure per Countries (% of GDP)',
+        },
+        width: 850,
+        height: 550,
+		hAxis: {title: 'Year',format:' ',side:'top'},
+		vAxis: {title: '% of GDP',format:'percent'}
+		
+		};
+
+      var chart = new google.charts.Line(document.getElementById('education_gdp_line_div'));
+
+      chart.draw(data, google.charts.Line.convertOptions(options));
+			
+		} //educationGdpResponseHandler
+		
+		
+		function educationGdp1ResponseHandler(response){
+			//get the data
+			var data = response.getDataTable();
+			data.sort({column: 0, desc:true});
+			
+			//set options
+			var options = {height: 550,
+						   width: 850,
+						   vAxis: {title: '% of GDP',format:'percent'},
+						   hAxis: {title: 'Country'}};
+	
+			//create the chart and draw it
+			var chart = new google.visualization.ColumnChart(document.getElementById('education_gdp_col_div'));
+			chart.draw(data, options);
+			
+		} //educationGdp1ResponseHandler
+		
+	</script>
+</head>
+
+<body>
+	<div id="main">
+		<div id="header">
+			<div id="logo">
+				<div id="logo_text">
+					<h1><a href="index.html">
+							Project1 <span class="logo_color"> | Analyz World GDP DATA</span>
+					    </a></h1>
+					<h2>Visualization of Complex Data</h2>
+				</div><!-- logo_text -->
+			</div><!-- logo -->
+			<div id="menubar">
+				<ul id="menu">
+					<li ><a href="index.html">World GDP Analysis</a></li>
+					<li ><a href="military.html">Military GDP Analysis</a></li>
+					<li ><a href="healthcare.html">Healthcare GPD Analysis</a></li>
+					<li class="selected"><a href="education.html">Educations GPD Analysis</a></li>
+				</ul><!-- menu -->
+			</div><!-- menubar -->
+		</div><!-- header -->
+		
+		<div id="site_content">
+			<div id="content">
+				<div id="chart_content">
+				<h1>Analyz World GDP DATA</h1>
+					<table>
+<tr>	
+	<td><div id="education_gdp_line_div" style="width: 500px; height: 600px;"></div></td>
+</tr>
+
+<tr>	
+	<td><div id="education_gdp_col_div" style="width: 800px; height: 600px;"></div></td>
+</tr>
+
+</table>	
+					
+		</div> <!-- chart content -->
+		</div><!-- content -->
+		</div><!-- site_content -->
+		
+		<div id="content_footer">
+			<div id="footer">
+				Copyright &copy; 
+				<script>
+					var d = new Date();
+					document.write(d.getFullYear());
+				</script> 
+				
+				| HTML5 | CSS3 | By NZ
+			</div><!-- footer -->
+		</div><!-- content_footer -->
+	</div><!-- main -->
+</body>
+</html>
